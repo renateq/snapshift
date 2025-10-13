@@ -55,7 +55,6 @@ func handleWS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &Client{conn: ws}
-	fmt.Println(client)
 
 	defer func() {
 		cleanupClient(client)
