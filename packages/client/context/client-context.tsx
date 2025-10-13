@@ -18,7 +18,7 @@ declare global {
 console.dev = function (msg: string) {
   if (
     process.env.NODE_ENV === 'development' ||
-    process.env.ENABLE_DEV_LOGS === 'true'
+    process.env.CI_TEST === 'true'
   ) {
     console.log('[DEV]', msg)
   }

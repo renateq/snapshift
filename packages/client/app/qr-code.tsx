@@ -8,7 +8,10 @@ export function QRCode() {
   const { socketId } = useClientContext()
 
   function handleClick() {
-    if (process.env.NODE_ENV === 'development') {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.CI_TEST === 'true'
+    ) {
       window.open(
         `${window.location.origin}/phone?id=${socketId}`,
         '_blank',
