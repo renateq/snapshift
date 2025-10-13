@@ -10,7 +10,7 @@ export function QRCode() {
   function handleClick() {
     if (
       process.env.NODE_ENV === 'development' ||
-      process.env.CI_TEST === 'true'
+      process.env.NEXT_PUBLIC_CI_TEST === 'true'
     ) {
       window.open(
         `${window.location.origin}/phone?id=${socketId}`,
