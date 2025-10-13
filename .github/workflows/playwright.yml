@@ -31,7 +31,7 @@ jobs:
           cd packages/client && npx next start &
           npx wait-on http://localhost:3000
         env:
-          CI_TEST: true
+          CI_TEST: 'true'
 
       - name: Run Playwright tests
         run: npx playwright test
