@@ -8,6 +8,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_CI_TEST: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,8 +32,6 @@ jobs:
           cd packages/server && go run main.go &
           cd packages/client && npx next start &
           npx wait-on http://localhost:3000
-        env:
-          NEXT_PUBLIC_CI_TEST: 'true'
 
       - name: Run Playwright tests
         run: npx playwright test
