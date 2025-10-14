@@ -9,7 +9,6 @@ const allowedTypesExtensions = [
   '.gif',
   '.heic',
   '.webp',
-  '.webp',
   '.heif',
   '.svg',
 ]
