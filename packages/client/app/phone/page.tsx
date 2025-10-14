@@ -1,7 +1,10 @@
 'use client'
 
 import { useClientContext } from '@/context/client-context'
+import { LoaderCircle } from 'lucide-react'
 import { useEffect } from 'react'
+import { UploadBtn } from './upload-btn'
+import Image from 'next/image'
 
 export default function Phone() {
   const { socketId, status, connect } = useClientContext()
@@ -16,5 +19,29 @@ export default function Phone() {
     }
   }, [socketId, connect])
 
-  return <div>phone - {status}</div>
+  return (
+    <>
+      <main className="flex min-h-[calc(100dvh-5rem)] flex-col justify-evenly px-[10%]">
+        {status === 'idle' ? (
+          <div>
+            <LoaderCircle
+              size={50}
+              className="mx-auto animate-spin opacity-20"
+            />
+          </div>
+        ) : (
+          <>
+            <Image
+              src="/person.svg"
+              width={400}
+              height={400}
+              alt="Person"
+              className="mx-auto w-10/12 max-w-lg"
+            />
+            <UploadBtn />
+          </>
+        )}
+      </main>
+    </>
+  )
 }

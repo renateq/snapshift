@@ -34,12 +34,14 @@ type ClientContextType = {
   status: Status
   socketId: string | null
   connect: (peerId: string) => void
+  sendFiles: (files: File[]) => void
 }
 
 const ClientContext = createContext<ClientContextType>({
   status: 'idle',
   socketId: null,
   connect: () => {},
+  sendFiles: () => {},
 })
 
 export const useClientContext = () => useContext(ClientContext)
@@ -102,8 +104,12 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
     )
   }
 
+  function sendFiles(files: File[]) {
+    console.dev(`sending ${files.length} image(s)`)
+  }
+
   return (
-    <ClientContext.Provider value={{ status, socketId, connect }}>
+    <ClientContext.Provider value={{ status, socketId, connect, sendFiles }}>
       {children}
     </ClientContext.Provider>
   )
