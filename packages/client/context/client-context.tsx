@@ -108,14 +108,16 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
         const fileBytes = buffer.slice(4 + metaLength)
         const blob = new Blob([fileBytes], { type: meta.mime })
 
-        const file = new File([blob], `snapshift-${sharedFiles.length + 1}`, {
-          type: meta.mime,
-          lastModified: Date.now(),
+        setSharedFiles((prev) => {
+          const file = new File([blob], `snapshift-${prev.length + 1}`, {
+            type: meta.mime,
+            lastModified: Date.now(),
+          })
+
+          console.dev('new file: ' + file.type)
+
+          return [...prev, file]
         })
-
-        console.dev('new file: ' + file.type)
-
-        setSharedFiles((prev) => [...prev, file])
       }
     }
 

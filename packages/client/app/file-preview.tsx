@@ -16,15 +16,24 @@ export function FilePreview({ file }: FilePreviewProps) {
 
   useEffect(() => {
     const url = URL.createObjectURL(file)
+    const img = new window.Image()
+    let isMounted = true
 
     if (file.type.startsWith('image/')) {
       setPreviewUrl(url)
-      const img = new window.Image()
-      img.onload = () => setDimensions({ width: img.width, height: img.height })
+
+      img.onload = () => {
+        if (isMounted) {
+          setDimensions({ width: img.width, height: img.height })
+        }
+      }
+
       img.src = url
     }
 
     return () => {
+      isMounted = false
+      img.onload = null // clean up handler
       URL.revokeObjectURL(url)
     }
   }, [file])
