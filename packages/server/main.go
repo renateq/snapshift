@@ -13,9 +13,12 @@ import (
 )
 
 type Message struct {
-	Type  string `json:"type"`
-	ID    string `json:"id,omitempty"`
-	Error string `json:"error,omitempty"`
+	Type     string `json:"type"`
+	ID       string `json:"id,omitempty"`
+	Error    string `json:"error,omitempty"`
+	FileMeta struct {
+		Mime string `json:"mime,omitempty"`
+	} `json:"fileMeta,omitempty"`
 }
 
 type Client struct {
@@ -34,6 +37,13 @@ func (c *Client) Send(msg Message) error {
 	return c.conn.WriteMessage(websocket.TextMessage, data)
 }
 
+func (c *Client) SendRaw(raw []byte) error {
+	c.writeLock.Lock()
+	defer c.writeLock.Unlock()
+
+	return c.conn.WriteMessage(websocket.BinaryMessage, raw)
+}
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		// For production, restrict origins properly.
@@ -42,9 +52,10 @@ var upgrader = websocket.Upgrader{
 }
 
 var (
-	mapsLock sync.Mutex
-	waiting  = make(map[string]*Client)  // socketID -> Client (waiting for a pair)
-	pairings = make(map[*Client]*Client) // client -> paired client
+	waitingLock  sync.Mutex
+	pairingsLock sync.Mutex
+	waiting      = make(map[string]*Client)  // socketID -> Client (waiting for a pair)
+	pairings     = make(map[*Client]*Client) // client -> paired client
 )
 
 func handleWS(w http.ResponseWriter, r *http.Request) {
@@ -68,76 +79,87 @@ func handleWS(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println("Message type:", messageType)
-
-		var msg Message
-		if err := json.Unmarshal(raw, &msg); err != nil {
-			log.Printf("invalid json: %s\n", string(raw))
-			_ = client.Send(Message{Type: "error", Error: "invalid JSON"})
-			continue
-		}
-
-		switch msg.Type {
-		case "register":
-			id := uuid.NewString()
-			mapsLock.Lock()
-			waiting[id] = client
-			mapsLock.Unlock()
-			if err := client.Send(Message{Type: "registered", ID: id}); err != nil {
-				log.Println("send registered error:", err)
+		if messageType == websocket.BinaryMessage {
+			pairingsLock.Lock()
+			peer := pairings[client]
+			pairingsLock.Unlock()
+			if peer == nil {
+				log.Printf("no peer found for client")
+				continue
 			}
-		case "connect":
-			if msg.ID == "" {
-				_ = client.Send(Message{Type: "error", Error: "missing id"})
+			_ = peer.SendRaw(raw)
+		} else if messageType == websocket.TextMessage {
+			var msg Message
+			if err := json.Unmarshal(raw, &msg); err != nil {
+				log.Printf("invalid json: %s\n", string(raw))
+				_ = client.Send(Message{Type: "error", Error: "invalid JSON"})
 				continue
 			}
 
-			mapsLock.Lock()
-			target, ok := waiting[msg.ID]
-			if !ok {
-				mapsLock.Unlock()
-				_ = client.Send(Message{Type: "error", Error: "invalid ID"})
-				continue
+			switch msg.Type {
+			case "register":
+				id := uuid.NewString()
+				waitingLock.Lock()
+				waiting[id] = client
+				waitingLock.Unlock()
+				if err := client.Send(Message{Type: "registered", ID: id}); err != nil {
+					log.Println("send registered error:", err)
+				}
+			case "connect":
+				if msg.ID == "" {
+					_ = client.Send(Message{Type: "error", Error: "missing id"})
+					continue
+				}
+
+				waitingLock.Lock()
+				target, ok := waiting[msg.ID]
+				if !ok {
+					waitingLock.Unlock()
+					_ = client.Send(Message{Type: "error", Error: "invalid ID"})
+					continue
+				}
+
+				// create 2-way pairing
+				pairings[client] = target
+				pairings[target] = client
+
+				// remove from waiting set
+				delete(waiting, msg.ID)
+				waitingLock.Unlock()
+
+				_ = client.Send(Message{Type: "connected"})
+				_ = target.Send(Message{Type: "connected"})
+
+			case "disconnect":
+				cleanupClient(client)
+
+			default:
+				_ = client.Send(Message{Type: "error", Error: "Unknown message type"})
 			}
-
-			// create 2-way pairing
-			pairings[client] = target
-			pairings[target] = client
-
-			// remove from waiting set
-			delete(waiting, msg.ID)
-			mapsLock.Unlock()
-
-			_ = client.Send(Message{Type: "connected"})
-			_ = target.Send(Message{Type: "connected"})
-
-		case "disconnect":
-			cleanupClient(client)
-
-		default:
-			_ = client.Send(Message{Type: "error", Error: "Unknown message type"})
 		}
+
 	}
 }
 
 func cleanupClient(c *Client) {
-	mapsLock.Lock()
-	defer mapsLock.Unlock()
-
 	// Remove from waiting (if any)
+	waitingLock.Lock()
 	for id, cl := range waiting {
 		if cl == c {
 			delete(waiting, id)
 			break
 		}
 	}
+	waitingLock.Unlock()
 
 	// Notify and unlink pair if exists
+	pairingsLock.Lock()
 	if peer, ok := pairings[c]; ok && peer != nil {
 		_ = peer.Send(Message{Type: "disconnected"})
 		delete(pairings, peer)
 		delete(pairings, c)
 	}
+	pairingsLock.Unlock()
 }
 
 func main() {
