@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { CopyBtn, DownloadBtn } from './file-buttons'
 
 type FilePreviewProps = {
   file: File
@@ -57,8 +58,8 @@ export function FilePreview({ file }: FilePreviewProps) {
         </div>
         <div className="absolute left-0 top-0 h-full w-full bg-black/5 opacity-0 hover:opacity-100">
           <div className="absolute bottom-5 right-5 flex items-center gap-2">
-            <span>Download</span>
-            <span>Copy</span>
+            <DownloadBtn file={file} />
+            <CopyBtn file={file} />
           </div>
         </div>
       </div>
