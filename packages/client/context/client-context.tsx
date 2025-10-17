@@ -60,7 +60,6 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
 
   const socketRef = useRef<WebSocket | null>(null)
   const peerIdRef = useRef<string | null>(null)
-  const nextFileMeta = useRef<FileMeta | null>(null)
   const isInitiatorRef = useRef(false)
 
   useEffect(() => {

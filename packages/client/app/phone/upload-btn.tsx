@@ -1,6 +1,6 @@
 import { useClientContext } from '@/context/client-context'
-import { Check, Images, Loader } from 'lucide-react'
-import { ChangeEvent, useRef, useState } from 'react'
+import { Images } from 'lucide-react'
+import { ChangeEvent, useRef } from 'react'
 
 const allowedTypesExtensions = [
   '.png',
