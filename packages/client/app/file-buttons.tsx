@@ -55,7 +55,7 @@ export function CopyBtn({ file }: BtnProps) {
   return (
     <button
       onClick={handleCopy}
-      className="cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
+      className="copy-btn cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
     >
       <Copy size={22} />
     </button>
@@ -78,7 +78,7 @@ export function DownloadBtn({ file }: BtnProps) {
     const url = URL.createObjectURL(file)
     const a = document.createElement('a')
     a.href = url
-    a.download = `sharesnap_${currentId}`
+    a.download = `snapshift_${currentId}`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -86,7 +86,7 @@ export function DownloadBtn({ file }: BtnProps) {
   return (
     <button
       onClick={handleDownload}
-      className="cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
+      className="download-btn cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
     >
       <Download size={22} />
     </button>
