@@ -86,4 +86,33 @@ test('sharing images', async ({ page, context }) => {
       await expect(img).toHaveCount(1) // Each child must have exactly one img
     }
   })
+
+  await test.step('download images', async () => {
+    const gallery = page.locator('#gallery')
+    const children = gallery.locator(':scope > *')
+
+    // Iterate through each image's download button
+    const downloadButtons = children.locator('button.download-btn')
+
+    const count = await downloadButtons.count()
+    expect(count).toBe(MIMEs.length)
+
+    for (let i = 0; i < count; i++) {
+      const button = downloadButtons.nth(i)
+
+      // Wait for download to start
+      const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        button.click(),
+      ])
+
+      const path = await download.path()
+      expect(path).not.toBeNull()
+
+      const suggestedName = download.suggestedFilename()
+      expect(suggestedName).toContain('snapshift_')
+
+      // await download.saveAs(`tests/downloads/${suggestedName}`)
+    }
+  })
 })
