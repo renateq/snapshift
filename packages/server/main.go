@@ -178,12 +178,11 @@ func cleanupClient(c *Client) {
 	pairingsLock.Unlock()
 }
 
-func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
-	}
+func init() {
+	_ = godotenv.Load()
+}
 
+func main() {
 	// Supabase
 	API_URL := os.Getenv("API_URL")
 	API_KEY := os.Getenv("API_KEY")
