@@ -10,6 +10,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
+	"github.com/supabase-community/supabase-go"
 )
 
 type Message struct {
@@ -24,6 +26,11 @@ type Message struct {
 type Client struct {
 	conn      *websocket.Conn
 	writeLock sync.Mutex
+}
+
+type FileMeta struct {
+	Size int64  `json:"size"`
+	Env  string `json:"environment"`
 }
 
 func (c *Client) Send(msg Message) error {
@@ -58,7 +65,7 @@ var (
 	pairings     = make(map[*Client]*Client) // client -> paired client
 )
 
-func handleWS(w http.ResponseWriter, r *http.Request) {
+func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.Client, env string) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
@@ -86,6 +93,15 @@ func handleWS(w http.ResponseWriter, r *http.Request) {
 			if peer == nil {
 				log.Printf("no peer found for client")
 				continue
+			}
+
+			entry := FileMeta{Size: int64(len(raw)), Env: "dev"}
+			if env == "prod" {
+				entry.Env = "prod"
+			}
+			_, _, err := supabaseClient.From("files").Insert(entry, false, "", "none", "").Execute()
+			if err != nil {
+				log.Println(err)
 			}
 			_ = peer.SendRaw(raw)
 		} else if messageType == websocket.TextMessage {
@@ -162,13 +178,33 @@ func cleanupClient(c *Client) {
 	pairingsLock.Unlock()
 }
 
+func init() {
+	_ = godotenv.Load()
+}
+
 func main() {
+	// Supabase
+	API_URL := os.Getenv("API_URL")
+	API_KEY := os.Getenv("API_KEY")
+
+	supabaseClient, err := supabase.NewClient(API_URL, API_KEY, nil)
+	if err != nil {
+		log.Fatalln("Failed to initialize the client: ", err)
+	}
+
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "dev"
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3001"
 	}
 
-	http.HandleFunc("/ws", handleWS)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		handleWS(w, r, supabaseClient, env)
+	})
 
 	fmt.Println("WebSocket signaling server listening on :" + port)
 	if err := http.ListenAndServe(":"+port, nil); err != nil {

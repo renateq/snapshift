@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_CI_TEST: 'true'
+      API_URL: ${{ secrets.API_URL }}
+      API_KEY: ${{ secrets.API_KEY }}
+      ENV: ${{ vars.ENV }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
