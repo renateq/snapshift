@@ -190,7 +190,7 @@ func main() {
 
 	supabaseClient, err := supabase.NewClient(API_URL, API_KEY, nil)
 	if err != nil {
-		fmt.Println("Failed to initialize the client: ", err)
+		log.Fatalln("Failed to initialize the client: ", err)
 	}
 
 	env := os.Getenv("ENV")
