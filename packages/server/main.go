@@ -29,7 +29,8 @@ type Client struct {
 }
 
 type FileMeta struct {
-	Size int64 `json:"size"`
+	Size int64  `json:"size"`
+	Env  string `json:"environment"`
 }
 
 func (c *Client) Send(msg Message) error {
@@ -64,7 +65,7 @@ var (
 	pairings     = make(map[*Client]*Client) // client -> paired client
 )
 
-func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.Client) {
+func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.Client, env string) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("upgrade:", err)
@@ -94,7 +95,10 @@ func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.C
 				continue
 			}
 
-			entry := FileMeta{Size: int64(len(raw))}
+			entry := FileMeta{Size: int64(len(raw)), Env: "dev"}
+			if env == "prod" {
+				entry.Env = "prod"
+			}
 			_, _, err := supabaseClient.From("files").Insert(entry, false, "", "none", "").Execute()
 			if err != nil {
 				log.Println(err)
@@ -189,13 +193,18 @@ func main() {
 		fmt.Println("Failed to initalize the client: ", err)
 	}
 
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "dev"
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3001"
 	}
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		handleWS(w, r, supabaseClient)
+		handleWS(w, r, supabaseClient, env)
 	})
 
 	fmt.Println("WebSocket signaling server listening on :" + port)
