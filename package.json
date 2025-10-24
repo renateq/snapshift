@@ -11,7 +11,8 @@
     "install:all": "node scripts/install-all.js",
     "install:ci": "node scripts/install-ci.js",
     "test": "npx playwright test",
-    "test:ui": "npx playwright test --ui"
+    "test:ui": "npx playwright test --ui",
+    "storybook": "cd packages/client && npm run storybook"
   },
   "dependencies": {
     "concurrently": "^9.2.1"
