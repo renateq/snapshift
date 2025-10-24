@@ -12,7 +12,6 @@ type Story = StoryObj<typeof meta>
 
 const file = makeImageFile()
 
-console.log(file)
 
 export const Primary: Story = {
   args: {
