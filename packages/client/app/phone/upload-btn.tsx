@@ -22,6 +22,9 @@ const allowedTypes = [
   'image/heif',
 ]
 
+const MAX_FILE_SIZE_MB = 30
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
 export function UploadBtn() {
   const { sendFiles } = useClientContext()
   const imageInputRef = useRef<HTMLInputElement | null>(null)
@@ -32,9 +35,17 @@ export function UploadBtn() {
 
     const fileArray = Array.from(files)
 
-    const validFiles = fileArray.filter((file) =>
-      allowedTypes.includes(file.type),
-    )
+    const validFiles = fileArray.filter((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        return false
+      }
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        return false
+      }
+
+      return true
+    })
 
     if (validFiles.length > 0) {
       sendFiles(validFiles)

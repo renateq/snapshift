@@ -5,6 +5,7 @@ import { LoaderCircle } from 'lucide-react'
 import { useEffect } from 'react'
 import { UploadBtn } from './upload-btn'
 import Image from 'next/image'
+import { Navbar } from './navbar'
 
 export default function Phone() {
   const { socketId, status, connect } = useClientContext()
@@ -21,6 +22,7 @@ export default function Phone() {
 
   return (
     <>
+      <Navbar />
       <main className="flex min-h-[calc(100dvh-5rem)] flex-col justify-evenly px-[10%]">
         {status === 'idle' ? (
           <div>
