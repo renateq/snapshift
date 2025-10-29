@@ -11,7 +11,7 @@ export function Navbar() {
       </h1>
       <div className="flex items-center gap-12">
         <TermsOfUse />
-        <a href="https://github.com/renateq/snapshift" target="_blank">
+        <a href="https://github.com/renateq/snapshift" target="_blank" rel="noopener noreferrer">
           <Github />
         </a>
       </div>
