@@ -16,7 +16,9 @@ export function TermsOfUse() {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>Terms of Use</button>
+      <button onClick={() => setIsOpen(true)} className="cursor-pointer">
+        Terms of Use
+      </button>
       <AnimatePresence initial={false}>
         {isOpen ? (
           <motion.div
