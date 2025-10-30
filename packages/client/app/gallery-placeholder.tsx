@@ -13,11 +13,11 @@ export function GalleryPlaceholder() {
 
 function Btn() {
   return (
-    <div className="inline-block px-2">
+    <span className="inline-block px-2">
       <span className="flex items-center gap-1 rounded-lg bg-black px-3 py-1.5 text-base text-white">
         <ImageIcon size={20} />
         <span>Choose Photos</span>
       </span>
-    </div>
+    </span>
   )
 }

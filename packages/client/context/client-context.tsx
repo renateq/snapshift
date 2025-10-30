@@ -39,6 +39,7 @@ type ClientContextType = {
   status: Status
   socketId: string | null
   sharedFiles: File[]
+  isSending: boolean
   connect: (peerId: string) => void
   sendFiles: (files: File[]) => void
 }
@@ -47,6 +48,7 @@ const ClientContext = createContext<ClientContextType>({
   status: 'idle',
   socketId: null,
   sharedFiles: [],
+  isSending: false,
   connect: () => {},
   sendFiles: () => {},
 })
@@ -57,6 +59,7 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>('idle')
   const [socketId, setSocketId] = useState<string | null>(null)
   const [sharedFiles, setSharedFiles] = useState<File[]>([])
+  const [isSending, setIsSending] = useState(false)
 
   const socketRef = useRef<WebSocket | null>(null)
   const peerIdRef = useRef<string | null>(null)
@@ -137,6 +140,7 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
   }
 
   function sendFiles(files: File[]) {
+    setIsSending(true)
     console.dev(`sending ${files.length} image(s)`)
     if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
       console.warn('Socket not open')
@@ -161,11 +165,13 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
 
       socketRef.current?.send(payload)
     })
+
+    setIsSending(false)
   }
 
   return (
     <ClientContext.Provider
-      value={{ status, socketId, sharedFiles, connect, sendFiles }}
+      value={{ status, socketId, sharedFiles, isSending, connect, sendFiles }}
     >
       {children}
     </ClientContext.Provider>
