@@ -1,11 +1,22 @@
-import { Copy, Download } from 'lucide-react'
-import { useState } from 'react'
+import { CheckCheck, Copy, Download } from 'lucide-react'
+import { ReactNode, useCallback, useState } from 'react'
+import { motion } from 'motion/react'
+import { debounce } from '@/utils/debounce'
 
 type BtnProps = {
   file: File
 }
 
+const iconSize = 19
+
 export function CopyBtn({ file }: BtnProps) {
+  const [isCopied, setIsCopied] = useState(false)
+
+  const resetIcon = useCallback(
+    debounce(() => setIsCopied(false), 1500),
+    [],
+  )
+
   async function svgToPngBlob(file: File): Promise<Blob> {
     const text = await file.text()
     const svgUrl =
@@ -27,6 +38,8 @@ export function CopyBtn({ file }: BtnProps) {
   }
 
   async function handleCopy() {
+    setIsCopied(true)
+    resetIcon()
     try {
       let blob: Blob
 
@@ -53,12 +66,9 @@ export function CopyBtn({ file }: BtnProps) {
   }
 
   return (
-    <button
-      onClick={handleCopy}
-      className="copy-btn cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
-    >
-      <Copy size={22} />
-    </button>
+    <BtnContainer handleClick={handleCopy}>
+      {isCopied ? <CheckCheck size={iconSize} /> : <Copy size={iconSize} />}
+    </BtnContainer>
   )
 }
 
@@ -84,11 +94,30 @@ export function DownloadBtn({ file }: BtnProps) {
   }
 
   return (
-    <button
-      onClick={handleDownload}
-      className="download-btn cursor-pointer rounded-lg border border-gray-400 bg-white p-1"
+    <BtnContainer handleClick={handleDownload}>
+      <Download size={iconSize} />
+    </BtnContainer>
+  )
+}
+
+type BtnContainerProps = {
+  handleClick: () => void
+  children: ReactNode
+}
+
+function BtnContainer({ handleClick, children }: BtnContainerProps) {
+  return (
+    <motion.button
+      whileTap={{
+        y: 1,
+      }}
+      whileHover={{
+        y: -1,
+      }}
+      onClick={handleClick}
+      className="copy-btn cursor-pointer rounded bg-white p-1"
     >
-      <Download size={22} />
-    </button>
+      {children}
+    </motion.button>
   )
 }

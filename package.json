@@ -15,7 +15,8 @@
     "storybook": "cd packages/client && npm run storybook"
   },
   "dependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "motion": "^12.23.24"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
