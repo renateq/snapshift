@@ -1,9 +1,9 @@
 'use client'
 
 import { useClientContext } from '@/context/client-context'
-import { QRCode } from './qr-code'
 import { DisplayFiles } from './display-files'
 import { Navbar } from './navbar'
+import { Hero } from './hero'
 
 export default function Home() {
   const { status } = useClientContext()
@@ -11,9 +11,9 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="min-h-[calc(100dvh-5rem)] px-[10%]">
+      <main className="px-[10%] pb-20">
         <div className={status !== 'idle' ? 'hidden' : ''}>
-          <QRCode />
+          <Hero />
         </div>
         <div className={status === 'idle' ? 'hidden' : ''}>
           <DisplayFiles />
