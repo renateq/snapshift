@@ -2,6 +2,7 @@ import { CheckCheck, Copy, Download } from 'lucide-react'
 import { ReactNode, useCallback, useState } from 'react'
 import { motion } from 'motion/react'
 import { debounce } from '@/utils/debounce'
+import { clsx } from 'clsx'
 
 type BtnProps = {
   file: File
@@ -94,7 +95,7 @@ export function DownloadBtn({ file }: BtnProps) {
   }
 
   return (
-    <BtnContainer handleClick={handleDownload}>
+    <BtnContainer handleClick={handleDownload} className="download-btn">
       <Download size={iconSize} />
     </BtnContainer>
   )
@@ -103,9 +104,10 @@ export function DownloadBtn({ file }: BtnProps) {
 type BtnContainerProps = {
   handleClick: () => void
   children: ReactNode
+  className?: string
 }
 
-function BtnContainer({ handleClick, children }: BtnContainerProps) {
+function BtnContainer({ handleClick, children, className }: BtnContainerProps) {
   return (
     <motion.button
       whileTap={{
@@ -115,7 +117,10 @@ function BtnContainer({ handleClick, children }: BtnContainerProps) {
         y: -1,
       }}
       onClick={handleClick}
-      className="copy-btn cursor-pointer rounded bg-white p-1"
+      className={clsx(
+        'copy-btn cursor-pointer rounded bg-white p-1',
+        className,
+      )}
     >
       {children}
     </motion.button>
