@@ -67,7 +67,7 @@ export function CopyBtn({ file }: BtnProps) {
   }
 
   return (
-    <BtnContainer handleClick={handleCopy}>
+    <BtnContainer handleClick={handleCopy} className="copy-btn">
       {isCopied ? <CheckCheck size={iconSize} /> : <Copy size={iconSize} />}
     </BtnContainer>
   )
@@ -117,10 +117,7 @@ function BtnContainer({ handleClick, children, className }: BtnContainerProps) {
         y: -1,
       }}
       onClick={handleClick}
-      className={clsx(
-        'copy-btn cursor-pointer rounded bg-white p-1',
-        className,
-      )}
+      className={clsx('cursor-pointer rounded bg-white p-1', className)}
     >
       {children}
     </motion.button>
