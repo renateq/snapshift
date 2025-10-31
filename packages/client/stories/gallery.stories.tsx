@@ -11,7 +11,7 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-const files: File[] = Array.from<File>({ length: 5 }).fill(makeImageFile())
+const files: File[] = Array.from({ length: 5 }, () => makeImageFile())
 
 export const Primary: Story = {
   args: {
