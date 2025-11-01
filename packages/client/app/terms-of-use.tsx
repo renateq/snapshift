@@ -26,21 +26,21 @@ export function TermsOfUse() {
               opacity: 0,
             }}
             hidden={!isOpen}
-            className="fixed left-0 top-0 flex h-full w-full items-center justify-center bg-black/20"
+            className="fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center bg-black/20"
           >
             <motion.div
               key="modal"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              className="w-11/12 max-w-xl rounded-lg bg-white px-8 py-6"
+              className="z-50 w-11/12 max-w-3xl rounded-lg bg-white px-8 py-6"
             >
               <p className="text-center opacity-80">Terms of Use</p>
-              <div className="prose prose-h1:hidden mt-4 h-[60vh] w-full overflow-auto px-2">
+              <div className="prose prose-h1:hidden mt-4 h-[60vh] !max-w-none overflow-auto px-2">
                 <ReactMarkdown>{terms}</ReactMarkdown>
               </div>
               <button
-                className="ml-auto mt-10 block rounded bg-black px-6 py-1 text-white"
+                className="ml-auto mt-10 block cursor-pointer rounded bg-black px-6 py-1 text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Close
