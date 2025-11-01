@@ -96,7 +96,6 @@ test('downloading all images', async ({ page, context }) => {
     ])
 
     // Save the downloaded file to a temp path
-    const downloadPath = await download.path()
     const tempPath = path.join(process.cwd(), 'downloaded.zip')
     await download.saveAs(tempPath)
 
