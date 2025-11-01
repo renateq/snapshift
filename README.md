@@ -2,6 +2,8 @@
 
 Snapshift is a lightweight web app that lets you instantly transfer images from your phone to your laptop — **no logins, no cables, no setup required.**
 
+![banner](docs/assets/banner.png 'Banner')
+
 ## 🧩 Project Structure
 
 ### `packages/` directory
@@ -14,6 +16,10 @@ This project is structured as a **monorepo** with two main packages:
 ### `tests/` directory
 
 End-to-end (E2E) tests are written using **Playwright** and stored in the `tests` folder.
+
+Continuous integration is handled via **GitHub Actions**, which automatically runs all tests on every pull request.
+
+A **branch protection rule** ensures that all tests must pass before merging into the main branch.
 
 ### `scripts/` directory
 
@@ -53,4 +59,5 @@ The following commands can be run from the **root directory**:
 - **Frontend:** Next.js, TypeScript
 - **Backend:** Go (WebSocket server)
 - **Testing:** Playwright
-- **Tooling:** Monorepo with npm workspaces, Prettier, Storybook
+- **CI/CD:** GitHub Actions for automated tests on PRs
+- **Tooling:** Prettier, Storybook
