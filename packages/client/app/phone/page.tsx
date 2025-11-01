@@ -38,7 +38,7 @@ export default function Phone() {
               width={400}
               height={400}
               alt="Person"
-              className="mx-auto w-10/12 max-w-lg"
+              className="mx-auto w-10/12 max-w-lg pb-20"
             />
             <UploadBtn />
           </>

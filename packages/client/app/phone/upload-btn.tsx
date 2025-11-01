@@ -1,5 +1,5 @@
 import { useClientContext } from '@/context/client-context'
-import { Images } from 'lucide-react'
+import { Images, Loader2 } from 'lucide-react'
 import { ChangeEvent, useRef } from 'react'
 
 const allowedTypesExtensions = [
@@ -26,7 +26,7 @@ const MAX_FILE_SIZE_MB = 30
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
 export function UploadBtn() {
-  const { sendFiles } = useClientContext()
+  const { sendFiles, isSending } = useClientContext()
   const imageInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleInput(e: ChangeEvent<HTMLInputElement>) {
@@ -57,22 +57,29 @@ export function UploadBtn() {
   return (
     <button
       id="upload-btn"
+      disabled={isSending}
       onClick={() => {
         imageInputRef.current?.click()
       }}
       className="h-13 flex w-full items-center justify-center gap-4 rounded-lg bg-black text-xl font-medium text-white"
     >
-      <Images size={30} />
-      <span>Choose photos</span>
+      {isSending ? (
+        <Loader2 size={30} className="animate-spin" />
+      ) : (
+        <>
+          <Images size={30} />
+          <span>Choose photos</span>
 
-      <input
-        type="file"
-        ref={imageInputRef}
-        accept={allowedTypesExtensions.join(',')}
-        multiple
-        className="hidden"
-        onChange={handleInput}
-      />
+          <input
+            type="file"
+            ref={imageInputRef}
+            accept={allowedTypesExtensions.join(',')}
+            multiple
+            className="hidden"
+            onChange={handleInput}
+          />
+        </>
+      )}
     </button>
   )
 }

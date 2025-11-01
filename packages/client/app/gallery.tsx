@@ -8,7 +8,7 @@ export function Gallery({ files }: GalleryProps) {
   return (
     <div
       id="gallery"
-      className="flex w-full flex-wrap items-start justify-center gap-12 py-8"
+      className="flex w-full flex-wrap items-start justify-center gap-x-0 gap-y-12 py-8"
     >
       {files.map((file) => (
         <FilePreview

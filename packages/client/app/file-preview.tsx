@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { CopyBtn, DownloadBtn } from './file-buttons'
+import { motion } from 'motion/react'
 
 type FilePreviewProps = {
   file: File
@@ -9,6 +10,7 @@ type FilePreviewProps = {
 const MAX_RATIO = 5 / 4
 
 export function FilePreview({ file }: FilePreviewProps) {
+  const [initialRotation] = useState(() => Math.random() * 14 - 7)
   const [previewUrl, setPreviewUrl] = useState<string>()
   const [dimensions, setDimensions] = useState<{
     width: number
@@ -44,7 +46,13 @@ export function FilePreview({ file }: FilePreviewProps) {
     const isTooWide = aspectRatio > MAX_RATIO
 
     return (
-      <div className="relative w-fit overflow-hidden rounded-xl border border-gray-200 bg-white p-2">
+      <motion.div
+        style={{ rotate: initialRotation }}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.1, rotate: 0, zIndex: 100 }}
+        className="relative w-fit overflow-hidden rounded-xl border-4 border-white bg-white p-2"
+      >
         <div
           className="h-80 overflow-hidden rounded-lg"
           style={{ aspectRatio: isTooWide ? MAX_RATIO : aspectRatio }}
@@ -62,7 +70,7 @@ export function FilePreview({ file }: FilePreviewProps) {
             <CopyBtn file={file} />
           </div>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
