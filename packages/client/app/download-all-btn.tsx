@@ -50,6 +50,7 @@ export function DownloadAllBtn({ files }: DownloadAllBtnProps) {
       whileHover={{
         y: -1,
       }}
+      id="download-all-btn"
       className="flex cursor-pointer items-center gap-2 rounded bg-black px-3 py-1.5 text-sm font-semibold text-white"
     >
       <Download size={18} strokeWidth={3} />

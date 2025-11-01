@@ -15,6 +15,7 @@
     "storybook": "cd packages/client && npm run storybook"
   },
   "dependencies": {
+    "adm-zip": "^0.5.16",
     "concurrently": "^9.2.1",
     "jszip": "^3.10.1"
   },
