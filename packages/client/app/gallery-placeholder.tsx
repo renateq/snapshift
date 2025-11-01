@@ -3,7 +3,7 @@ import { Image as ImageIcon } from 'lucide-react'
 export function GalleryPlaceholder() {
   return (
     <div className="flex min-h-[calc(100dvh-20rem)] flex-col items-center justify-evenly">
-      <ImageIcon size={250} className="opacity-20" />
+      <ImageIcon size={250} strokeWidth={1} className="opacity-20" />
       <p className="text-center text-lg opacity-90">
         Click on the <Btn /> button and select photos you want to transfer.
       </p>

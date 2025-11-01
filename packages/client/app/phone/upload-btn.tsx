@@ -1,26 +1,7 @@
 import { useClientContext } from '@/context/client-context'
+import { allowedFileTypes } from '@/utils/allowed-file-types'
 import { Images, Loader2 } from 'lucide-react'
 import { ChangeEvent, useRef } from 'react'
-
-const allowedTypesExtensions = [
-  '.png',
-  '.jpeg',
-  '.jpg',
-  '.gif',
-  '.heic',
-  '.webp',
-  '.heif',
-  '.svg',
-]
-const allowedTypes = [
-  'image/png',
-  'image/svg+xml',
-  'image/jpeg', // covers .jpeg and .jpg
-  'image/gif',
-  'image/webp',
-  'image/heic',
-  'image/heif',
-]
 
 const MAX_FILE_SIZE_MB = 30
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -36,7 +17,7 @@ export function UploadBtn() {
     const fileArray = Array.from(files)
 
     const validFiles = fileArray.filter((file) => {
-      if (!allowedTypes.includes(file.type)) {
+      if (!Object.keys(allowedFileTypes).includes(file.type)) {
         return false
       }
 
@@ -73,7 +54,7 @@ export function UploadBtn() {
           <input
             type="file"
             ref={imageInputRef}
-            accept={allowedTypesExtensions.join(',')}
+            accept={Object.values(allowedFileTypes).join(',')}
             multiple
             className="hidden"
             onChange={handleInput}
