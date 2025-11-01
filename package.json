@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "concurrently": "^9.2.1",
-    "jszip": "^3.10.1"
+    "concurrently": "^9.2.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
