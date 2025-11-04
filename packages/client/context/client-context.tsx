@@ -34,6 +34,8 @@ type Message =
   | { type: 'connected' | 'disconnected' }
   | { type: 'registered'; id: string }
   | { type: 'fileMeta'; fileMeta: FileMeta }
+  | { type: 'error'; error: string }
+  | { type: 'received' }
 
 type ClientContextType = {
   status: Status
@@ -64,6 +66,8 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
   const socketRef = useRef<WebSocket | null>(null)
   const peerIdRef = useRef<string | null>(null)
   const isInitiatorRef = useRef(false)
+  const noOfFilesSent = useRef(0)
+  const noOfFilesReceived = useRef(0)
 
   useEffect(() => {
     const socket = new WebSocket(
@@ -92,9 +96,19 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
             console.dev('disconnected')
             setStatus('disconnected')
             break
-
-          default:
+          case 'received':
+            console.dev('received')
+            noOfFilesReceived.current++
+            if (noOfFilesReceived.current == noOfFilesSent.current) {
+              console.dev('all files received')
+              setIsSending(false)
+            }
             break
+          case 'error':
+            console.dev(`error: ${msg.error}`)
+            break
+          default:
+            console.dev(`Unsupported message type: ${msg.type}`)
         }
       } else if (event.data instanceof Blob) {
         const buffer = await event.data.arrayBuffer()
@@ -120,6 +134,8 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
 
           return [...prev, file]
         })
+
+        socket.send(JSON.stringify({ type: 'received' }))
       }
     }
 
@@ -141,6 +157,7 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
 
   function sendFiles(files: File[]) {
     setIsSending(true)
+    noOfFilesSent.current += files.length
     console.dev(`sending ${files.length} image(s)`)
     if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
       console.warn('Socket not open')
@@ -165,8 +182,6 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
 
       socketRef.current?.send(payload)
     })
-
-    setIsSending(false)
   }
 
   return (
