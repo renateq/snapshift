@@ -122,7 +122,6 @@ func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.C
 					log.Println("send registered error:", err)
 				}
 			case "connect":
-				fmt.Println("connecting", msg.ID)
 				if msg.ID == "" {
 					_ = client.Send(Message{Type: "error", Error: "missing id"})
 					continue
