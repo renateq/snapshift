@@ -18,7 +18,8 @@ export default function Phone() {
         connect(id)
       }
     }
-  }, [socketId, connect])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketId])
 
   return (
     <>
