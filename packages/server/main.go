@@ -122,6 +122,7 @@ func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.C
 					log.Println("send registered error:", err)
 				}
 			case "connect":
+				fmt.Println("connecting", msg.ID)
 				if msg.ID == "" {
 					_ = client.Send(Message{Type: "error", Error: "missing id"})
 					continue
@@ -148,6 +149,16 @@ func handleWS(w http.ResponseWriter, r *http.Request, supabaseClient *supabase.C
 
 			case "disconnect":
 				cleanupClient(client)
+
+			case "received":
+				pairingsLock.Lock()
+				peer := pairings[client]
+				pairingsLock.Unlock()
+				if peer == nil {
+					log.Printf("no peer found for client")
+					continue
+				}
+				_ = peer.Send(Message{Type: "received"})
 
 			default:
 				_ = client.Send(Message{Type: "error", Error: "Unknown message type"})
