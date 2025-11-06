@@ -33,14 +33,14 @@ export function TermsOfUse() {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
-              className="z-50 w-11/12 max-w-3xl rounded-lg bg-white px-8 py-6"
+              className="z-50 w-11/12 max-w-3xl rounded-xl bg-white px-8 py-6"
             >
               <p className="text-center opacity-80">Terms of Use</p>
-              <div className="prose prose-h1:hidden mt-4 h-[60vh] !max-w-none overflow-auto px-2">
+              <div className="prose prose-h1:hidden prose-h2:mt-8 mt-4 h-[60vh] !max-w-none overflow-auto px-2">
                 <ReactMarkdown>{terms}</ReactMarkdown>
               </div>
               <button
-                className="ml-auto mt-10 block cursor-pointer rounded bg-black px-6 py-1 text-white"
+                className="ml-auto mt-10 block cursor-pointer rounded-lg bg-black px-6 py-1 text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Close

@@ -1,6 +1,6 @@
 # Terms of Use
 
-> Welcome! By using this application (“Service”), you agree to the following terms.
+Welcome! By using this application (“Service”), you agree to the following terms.
 
 ## 1. Use of the Service
 
