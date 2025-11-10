@@ -10,7 +10,7 @@ type ExitModalProps = {
 export default function ExitModal({ confirm, close }: ExitModalProps) {
   return (
     <div className="fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center bg-black/20">
-      <motion.div
+      <motion.div role="dialog" aria-modal="true"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         id="exit-modal"
